@@ -1,48 +1,40 @@
 function twoPluses(grid) {
-  const gridArray = grid.map((row) => row.split(""));
-  const rows = gridArray.length;
-  const cols = gridArray[0].length;
-  let max1 = 1;
-  let max2 = -Infinity;
+    const newGrid = grid.map(row => row.split(''));
+    const rows = grid.length;
+    const cols = grid[0].length;
 
-  for (let i = 1; i < rows - 1; ++i) {
-    for (let j = 1; j < cols - 1; ++j) {
-      if (gridArray[i][j] === "G") {
-        let plusSize = 1;
-        let result = 1;
+    let ans = 0;
 
-        while (
-          i - plusSize >= 0 &&
-          i + plusSize < rows &&
-          j - plusSize >= 0 &&
-          j + plusSize < cols &&
-          gridArray[i - plusSize][j] === "G" &&
-          gridArray[i + plusSize][j] === "G" &&
-          gridArray[i][j - plusSize] === "G" &&
-          gridArray[i][j + plusSize] === "G"
-        ) {
-          // Mark the cells with "S"
-          if (plusSize === 1) {
-            gridArray[i][j] = "S";
-          }
-          gridArray[i - plusSize][j] = "S";
-          gridArray[i + plusSize][j] = "S";
-          gridArray[i][j - plusSize] = "S";
-          gridArray[i][j + plusSize] = "S";
+    for (let i = 0; i <= rows; i++) {
+        for (let j = 0; j <= cols; j++) {
+            let plusSize1 = 0;
 
-          result = result + 4;
-          plusSize++;
+            while (i + plusSize1 < rows && i - plusSize1 >= 0 && j + plusSize1 < cols && j - plusSize1 >= 0 &&
+                newGrid[i + plusSize1][j] === "G" && newGrid[i - plusSize1][j] === "G" && newGrid[i][j + plusSize1] === "G" && newGrid[i][j - plusSize1] === "G") {
+                newGrid[i + plusSize1][j] = newGrid[i - plusSize1][j] = newGrid[i][j + plusSize1] = newGrid[i][j - plusSize1] = 'S';
+
+                for (let k = 0; k <= rows; k++) {
+                    for (let l = 0; l <= cols; l++) {
+                        let plusSize2 = 0;
+
+                        while (k + plusSize2 < rows && k - plusSize2 >= 0 && l + plusSize2 < cols && l - plusSize2 >= 0 &&
+                            newGrid[k + plusSize2][l] === "G" && newGrid[k - plusSize2][l] === "G" && newGrid[k][l + plusSize2] === "G" && newGrid[k][l - plusSize2] === "G") {
+                            ans = Math.max(ans, (4 * plusSize1 + 1) * (4 * plusSize2 + 1));
+                            plusSize2++;
+                        }
+                    }
+                }
+                plusSize1++;
+            }
+            
+            plusSize1 = 0;
+            
+            while (i + plusSize1 < rows && i - plusSize1 >= 0 && j + plusSize1 < cols && j - plusSize1 >= 0 &&
+                newGrid[i + plusSize1][j] === "S" && newGrid[i - plusSize1][j] === "S" && newGrid[i][j + plusSize1] === "S" && newGrid[i][j - plusSize1] === "S") {
+                newGrid[i + plusSize1][j] = newGrid[i - plusSize1][j] = newGrid[i][j + plusSize1] = newGrid[i][j - plusSize1] = 'G';
+                plusSize1++;
+            }
         }
-
-        // Update the max1 and max2 values
-        if (result > max1) {
-          max2 = max1;
-          max1 = result;
-        } else if (result > max2) {
-          max2 = result;
-        }
-      }
     }
-  }
-  return max1 * max2;
+    return ans;
 }
